@@ -28,9 +28,7 @@ class CitationContextClassifier(nn.Module):
     def __init__(
         self, 
         model_name: str = "allenai/scibert_scivocab_uncased",
-        num_necessity_classes: int = 2,  # needs_citation, no_citation_needed
-        num_type_classes: int = 5,       # background, method, support, comparison, contradiction
-        num_placement_classes: int = 3,  # beginning, middle, end
+        label_mappings: Optional[Dict[str, Dict]] = None,  # From real expert data
         dropout_rate: float = 0.1
     ):
         super().__init__()
@@ -38,6 +36,22 @@ class CitationContextClassifier(nn.Module):
         # Load pre-trained SciBERT as base model
         self.bert = AutoModel.from_pretrained(model_name)
         self.config = AutoConfig.from_pretrained(model_name)
+        
+        # Configure class counts from real expert data
+        if label_mappings is None:
+            # Default fallback - should be replaced with real data
+            self.label_mappings = {
+                'necessity': {False: 0, True: 1},
+                'type': {'background': 0, 'method': 1, 'support': 2, 'comparison': 3, 'contradiction': 4},
+                'placement': {'beginning': 0, 'middle': 1, 'end': 2}
+            }
+        else:
+            self.label_mappings = label_mappings
+            
+        # Extract class counts from real data
+        num_necessity_classes = len(self.label_mappings['necessity'])
+        num_type_classes = len(self.label_mappings['type'])
+        num_placement_classes = len(self.label_mappings['placement'])
         
         # Multi-task classification heads
         hidden_size = self.config.hidden_size
@@ -285,21 +299,30 @@ class IntegratedCitationAgent:
             type_probs = torch.softmax(outputs['type_logits'], dim=-1)
             placement_probs = torch.softmax(outputs['placement_logits'], dim=-1)
             
-            return {
-                'needs_citation': float(necessity_probs[0, 1]),  # probability of needing citation
-                'citation_type_probs': {
-                    'background': float(type_probs[0, 0]),
-                    'method': float(type_probs[0, 1]),
-                    'result_support': float(type_probs[0, 2]),
-                    'comparison': float(type_probs[0, 3]),
-                    'contradiction': float(type_probs[0, 4])
-                },
-                'placement_probs': {
-                    'beginning': float(placement_probs[0, 0]),
-                    'middle': float(placement_probs[0, 1]),
-                    'end': float(placement_probs[0, 2])
-                }
-            }
+            # Create dynamic result based on real label mappings
+            result = {}
+            
+            # Necessity prediction (assuming binary: False=0, True=1)
+            if len(necessity_probs[0]) == 2:
+                result['needs_citation'] = float(necessity_probs[0, 1])
+            else:
+                result['needs_citation'] = float(necessity_probs[0].max())
+            
+            # Citation type probabilities from real data
+            type_probs_dict = {}
+            for type_name, type_idx in self.label_mappings['type'].items():
+                if type_idx < len(type_probs[0]):
+                    type_probs_dict[type_name] = float(type_probs[0, type_idx])
+            result['citation_type_probs'] = type_probs_dict
+            
+            # Placement probabilities from real data
+            placement_probs_dict = {}
+            for placement_name, placement_idx in self.label_mappings['placement'].items():
+                if placement_idx < len(placement_probs[0]):
+                    placement_probs_dict[placement_name] = float(placement_probs[0, placement_idx])
+            result['placement_probs'] = placement_probs_dict
+            
+            return result
     
     def select_optimal_citations(
         self, 

@@ -1,0 +1,310 @@
+"""
+Complete Citation Intelligence Agent Training Script
+
+BULLETPROOF training script that uses real data and proper validation.
+Demonstrates end-to-end pipeline from data collection to trained model.
+"""
+
+import asyncio
+import logging
+import json
+import torch
+from pathlib import Path
+from transformers import AutoTokenizer
+import argparse
+import sys
+import os
+
+# Add src to path for imports
+sys.path.append(str(Path(__file__).parent.parent))
+
+from training.data_integration import DataIntegrationPipeline
+from agents.utils.data_processing import CitationDataset, AnnotationDatabaseManager
+from agents.citation.models import CitationContextClassifier
+from agents.citation.trainer import CitationTrainer, create_training_config
+
+
+class CitationAgentTrainingPipeline:
+    """
+    Complete training pipeline for Citation Intelligence Agent.
+    
+    Handles: Data Collection → Annotation → Training → Validation
+    """
+    
+    def __init__(
+        self,
+        data_dir: str = "./data",
+        models_dir: str = "./models",
+        use_simulation: bool = False  # DEV ONLY - replace with real annotations
+    ):
+        self.data_dir = Path(data_dir)
+        self.models_dir = Path(models_dir)
+        self.use_simulation = use_simulation
+        
+        # Create directories
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.models_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Setup logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(self.data_dir / 'training.log'),
+                logging.StreamHandler()
+            ]
+        )
+        self.logger = logging.getLogger(__name__)
+        
+        # Database paths
+        self.papers_db_path = str(self.data_dir / "papers.db")
+        self.annotations_db_path = str(self.data_dir / "annotations.db")
+        
+    async def run_complete_pipeline(
+        self,
+        max_papers: int = 1000,
+        min_annotations: int = 500
+    ) -> Dict[str, Any]:
+        """
+        Run the complete training pipeline.
+        
+        Returns training results and model paths.
+        """
+        
+        self.logger.info("Starting Citation Intelligence Agent training pipeline")
+        
+        results = {
+            'pipeline_stages': {},
+            'model_paths': {},
+            'performance_metrics': {},
+            'errors': []
+        }
+        
+        try:
+            # Stage 1: Data Integration
+            self.logger.info("Stage 1: Data Collection and Integration")
+            integration_pipeline = DataIntegrationPipeline(
+                papers_db_path=self.papers_db_path,
+                annotations_db_path=self.annotations_db_path
+            )
+            
+            integration_results = await integration_pipeline.run_full_pipeline(
+                max_papers=max_papers,
+                use_simulation=self.use_simulation
+            )
+            
+            results['pipeline_stages']['data_integration'] = integration_results
+            
+            if not integration_results.get('training_ready', False):
+                if integration_results['annotations_created'] < min_annotations:
+                    raise ValueError(
+                        f"Insufficient annotations: {integration_results['annotations_created']} < {min_annotations}. "
+                        f"Expert annotation phase must be completed first."
+                    )
+            
+            # Stage 2: Dataset Preparation
+            self.logger.info("Stage 2: Dataset Preparation")
+            tokenizer = AutoTokenizer.from_pretrained("allenai/scibert_scivocab_uncased")
+            
+            # Create datasets
+            train_dataset = CitationDataset(
+                annotation_db_path=self.annotations_db_path,
+                tokenizer=tokenizer,
+                split="train"
+            )
+            
+            val_dataset = CitationDataset(
+                annotation_db_path=self.annotations_db_path,
+                tokenizer=tokenizer,
+                split="val"
+            )
+            
+            if len(train_dataset) == 0:
+                raise ValueError("No training data available - expert annotations required")
+                
+            self.logger.info(f"Training set: {len(train_dataset)} samples")
+            self.logger.info(f"Validation set: {len(val_dataset)} samples")
+            
+            # Get label mappings from real data
+            label_mappings = train_dataset.get_label_mappings()
+            self.logger.info(f"Label mappings from real data: {label_mappings}")
+            
+            results['pipeline_stages']['dataset_preparation'] = {
+                'train_samples': len(train_dataset),
+                'val_samples': len(val_dataset),
+                'label_mappings': label_mappings
+            }
+            
+            # Stage 3: Model Training
+            self.logger.info("Stage 3: Model Training")
+            
+            # Create model with real label mappings
+            model = CitationContextClassifier(
+                model_name="allenai/scibert_scivocab_uncased",
+                label_mappings=label_mappings
+            )
+            
+            # Training configuration
+            config = create_training_config(
+                learning_rate=2e-5,
+                batch_size=8,
+                num_epochs=3,
+                use_cloud_optimizations=False  # Set to True for cloud training
+            )
+            
+            # Create trainer
+            trainer = CitationTrainer(
+                model=model,
+                tokenizer=tokenizer,
+                train_dataset=train_dataset,
+                val_dataset=val_dataset,
+                config=config,
+                experiment_name="citation-intelligence-dev",
+                save_dir=str(self.models_dir / "citation")
+            )
+            
+            # Train the model
+            training_results = trainer.train()
+            
+            results['pipeline_stages']['model_training'] = training_results
+            results['model_paths']['citation_model'] = training_results['model_save_path']
+            results['performance_metrics'] = {
+                'best_f1_score': training_results['best_val_f1'],
+                'training_completed': True
+            }
+            
+            self.logger.info(f"Training completed with best F1 score: {training_results['best_val_f1']:.4f}")
+            
+            # Stage 4: Model Validation
+            self.logger.info("Stage 4: Model Validation")
+            validation_results = self._validate_trained_model(
+                model_path=results['model_paths']['citation_model'],
+                label_mappings=label_mappings
+            )
+            
+            results['pipeline_stages']['validation'] = validation_results
+            
+        except Exception as e:
+            self.logger.error(f"Pipeline failed: {str(e)}")
+            results['errors'].append(str(e))
+            return results
+            
+        self.logger.info("Citation Intelligence Agent training pipeline completed successfully")
+        return results
+        
+    def _validate_trained_model(
+        self, 
+        model_path: str, 
+        label_mappings: Dict[str, Dict]
+    ) -> Dict[str, Any]:
+        """Validate the trained model with basic functionality tests."""
+        
+        try:
+            # Load tokenizer
+            tokenizer = AutoTokenizer.from_pretrained("allenai/scibert_scivocab_uncased")
+            
+            # Load model
+            model = CitationContextClassifier(label_mappings=label_mappings)
+            
+            # Load trained weights
+            checkpoint = torch.load(
+                Path(model_path) / "citation_model_best.pth",
+                map_location=torch.device('cpu')
+            )
+            model.load_state_dict(checkpoint['model_state_dict'])
+            model.eval()
+            
+            # Create integrated agent
+            from agents.citation.models import IntegratedCitationAgent
+            agent = IntegratedCitationAgent(
+                context_classifier=model,
+                selection_ranker=None,  # Not needed for basic validation
+                network_gnn=None,      # Not needed for basic validation  
+                tokenizer=tokenizer
+            )
+            
+            # Test with sample text
+            test_texts = [
+                "Previous studies have shown significant effects in neuroscience research.",
+                "The experimental procedure followed standard protocols.",
+                "Our results demonstrate clear patterns in the data."
+            ]
+            
+            predictions = []
+            for text in test_texts:
+                pred = agent.predict_citation_necessity(text)
+                predictions.append(pred)
+                
+            return {
+                'model_loaded': True,
+                'predictions_working': True,
+                'test_predictions': predictions,
+                'validation_passed': True
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Model validation failed: {str(e)}")
+            return {
+                'model_loaded': False,
+                'validation_passed': False,
+                'error': str(e)
+            }
+
+
+def main():
+    """Main training script with command-line interface."""
+    
+    parser = argparse.ArgumentParser(description='Train Citation Intelligence Agent')
+    parser.add_argument('--data_dir', default='./data', help='Data directory')
+    parser.add_argument('--models_dir', default='./models', help='Models directory')
+    parser.add_argument('--max_papers', type=int, default=100, help='Maximum papers to collect')
+    parser.add_argument('--min_annotations', type=int, default=50, help='Minimum annotations required')
+    parser.add_argument('--use_simulation', action='store_true', help='Use simulated annotations (DEV ONLY)')
+    
+    args = parser.parse_args()
+    
+    # Create training pipeline
+    pipeline = CitationAgentTrainingPipeline(
+        data_dir=args.data_dir,
+        models_dir=args.models_dir,
+        use_simulation=args.use_simulation
+    )
+    
+    # Run training
+    results = asyncio.run(pipeline.run_complete_pipeline(
+        max_papers=args.max_papers,
+        min_annotations=args.min_annotations
+    ))
+    
+    # Print results
+    print("\n" + "="*80)
+    print("CITATION INTELLIGENCE AGENT TRAINING RESULTS")
+    print("="*80)
+    
+    if results.get('errors'):
+        print(f"\n❌ ERRORS ENCOUNTERED:")
+        for error in results['errors']:
+            print(f"   - {error}")
+    
+    if results['pipeline_stages'].get('model_training'):
+        training_results = results['pipeline_stages']['model_training']
+        print(f"\n✅ TRAINING COMPLETED:")
+        print(f"   - Best F1 Score: {training_results.get('best_val_f1', 'N/A'):.4f}")
+        print(f"   - Model Path: {results['model_paths'].get('citation_model', 'N/A')}")
+    
+    if results['pipeline_stages'].get('validation', {}).get('validation_passed'):
+        print(f"\n✅ MODEL VALIDATION: PASSED")
+    else:
+        print(f"\n❌ MODEL VALIDATION: FAILED")
+    
+    print(f"\nComplete results saved to: {args.data_dir}/training.log")
+    
+    # Save detailed results
+    results_path = Path(args.data_dir) / "training_results.json"
+    with open(results_path, 'w') as f:
+        json.dump(results, f, indent=2, default=str)
+    print(f"Detailed results: {results_path}")
+
+
+if __name__ == "__main__":
+    main()
