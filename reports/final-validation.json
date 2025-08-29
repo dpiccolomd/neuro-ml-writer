@@ -1,0 +1,602 @@
+{
+  "analysis_mode": "comprehensive",
+  "timestamp": "2025-08-29T19:12:22.385889",
+  "violations": [
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 255,
+      "column": 23,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "def _get_real_test_examples(self) -> Dict[str, Any]:",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 266,
+      "column": 26,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'real_examples_available': False,",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 286,
+      "column": 26,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'real_examples_available': False,",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 302,
+      "column": 26,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'real_examples_available': False,",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 307,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'real_examples_available': True,",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 314,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'real_examples_available': False,",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 315,
+      "column": 47,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "'reason': f'Error loading real examples: {str(e)}'",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 132,
+      "column": 23,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'train_samples': len(train_dataset),",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 133,
+      "column": 21,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'val_samples': len(val_dataset),",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/train_citation_agent.py",
+      "line": 5,
+      "column": 0,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "Demonstrates end-to-end pipeline from data collection to trained model.",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 349,
+      "column": 59,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "stats['training_ready'] = train_count >= min_train_samples",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 350,
+      "column": 42,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "stats['min_required'] = min_train_samples",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 57,
+      "column": 51,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'previous studies? (?:have )?(?:shown|demonstrated|found|reported)',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 59,
+      "column": 35,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'as (?:reported|shown|demonstrated) by',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 60,
+      "column": 41,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'research (?:has )?(?:shown|demonstrated|indicated)',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 62,
+      "column": 35,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'it has been (?:shown|demonstrated|reported)',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 64,
+      "column": 44,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'findings? (?:suggest|indicate|demonstrate)',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 154,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "'shows', 'demonstrates', 'indicates', 'suggests'",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 114,
+      "column": 8,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample_titles = [row[0] for row in cursor.fetchall()]",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 119,
+      "column": 21,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "for title in sample_titles:",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 258,
+      "column": 16,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample = test_dataset[i]",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 262,
+      "column": 20,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample['input_ids'].unsqueeze(0),",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 263,
+      "column": 20,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample['attention_mask'].unsqueeze(0)",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 272,
+      "column": 44,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "all_necessity_labels.append(sample['necessity_labels'].item())",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 274,
+      "column": 39,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "all_type_labels.append(sample['type_labels'].item())",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 276,
+      "column": 44,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "all_placement_labels.append(sample['placement_labels'].item())",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 371,
+      "column": 23,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'train_samples': len(train_dataset)",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 385,
+      "column": 16,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample = train_dataset[0]",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 388,
+      "column": 24,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample['input_ids'].unsqueeze(0),",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 389,
+      "column": 24,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "sample['attention_mask'].unsqueeze(0)",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 228,
+      "column": 8,
+      "description": "Forbidden simulation keyword 'test_data' detected",
+      "evidence": "test_dataset: CitationDataset,",
+      "suggestion": "Remove all references to 'test_data' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 241,
+      "column": 15,
+      "description": "Forbidden simulation keyword 'test_data' detected",
+      "evidence": "if len(test_dataset) == 0:",
+      "suggestion": "Remove all references to 'test_data' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 257,
+      "column": 31,
+      "description": "Forbidden simulation keyword 'test_data' detected",
+      "evidence": "for i in range(len(test_dataset)):",
+      "suggestion": "Remove all references to 'test_data' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 258,
+      "column": 25,
+      "description": "Forbidden simulation keyword 'test_data' detected",
+      "evidence": "sample = test_dataset[i]",
+      "suggestion": "Remove all references to 'test_data' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 150,
+      "column": 14,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "total_samples = 0",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 213,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "total_samples += necessity_labels.size(0)",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 220,
+      "column": 60,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'Necessity_Acc': f\"{necessity_correct/total_samples:.3f}\",",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 221,
+      "column": 50,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'Type_Acc': f\"{type_correct/total_samples:.3f}\"",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 240,
+      "column": 61,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'train_necessity_acc': necessity_correct / total_samples,",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 241,
+      "column": 51,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'train_type_acc': type_correct / total_samples,",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/citation/trainer.py",
+      "line": 242,
+      "column": 61,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "'train_placement_acc': placement_correct / total_samples",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 3,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 52,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 3,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 52,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 377,
+      "column": 12,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "placeholders = ','.join(['?' for _ in ids])",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 378,
+      "column": 85,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "cursor.execute(f'UPDATE citation_annotations SET split = ? WHERE id IN ({placeholders})',",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 62,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 32,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 203,
+      "column": 27,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "Groups real annotation samples into batches for training.",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "HARDCODED_ML_LABELS",
+      "severity": "critical",
+      "file": "src/agents/citation/models.py",
+      "line": 41,
+      "column": 0,
+      "description": "Hardcoded ML label mappings detected",
+      "evidence": "if label_mappings is None:\n            raise ValueError(\n                \"BULLETPROOF POLICY VIOLATI...",
+      "suggestion": "Remove hardcoded mappings, require expert-derived labels only"
+    },
+    {
+      "type": "HARDCODED_ML_LABELS",
+      "severity": "critical",
+      "file": "src/agents/citation/models.py",
+      "line": 41,
+      "column": 0,
+      "description": "Hardcoded ML label mappings detected",
+      "evidence": "if label_mappings is None:\n            raise ValueError(\n                \"BULLETPROOF POLICY VIOLATI...",
+      "suggestion": "Remove hardcoded mappings, require expert-derived labels only"
+    },
+    {
+      "type": "SUSPICIOUS_VARIABLE",
+      "severity": "medium",
+      "file": "scripts/generate_compliance_report.py",
+      "line": 285,
+      "column": 8,
+      "description": "Suspicious variable assignment: 'hardcoded_violations'",
+      "evidence": "hardcoded_violations = [v for v in violations if 'HARDCODED' in v.get('type', '')]",
+      "suggestion": "Remove simulation-related variables"
+    },
+    {
+      "type": "SUSPICIOUS_VARIABLE",
+      "severity": "medium",
+      "file": "scripts/bulletproof_code_analyzer.py",
+      "line": 340,
+      "column": 12,
+      "description": "Suspicious variable assignment: 'hardcoded_patterns'",
+      "evidence": "hardcoded_patterns = [",
+      "suggestion": "Remove simulation-related variables"
+    },
+    {
+      "type": "SUSPICIOUS_FUNCTION_NAME",
+      "severity": "high",
+      "file": "src/training/train_citation_agent.py",
+      "line": 255,
+      "column": 4,
+      "description": "Suspicious function name: '_get_real_test_examples'",
+      "evidence": "def _get_real_test_examples(self) -> Dict[str, Any]:",
+      "suggestion": "Rename function to reflect real implementation"
+    }
+  ],
+  "summary": {
+    "total_violations": 58,
+    "by_severity": {
+      "critical": 55,
+      "medium": 2,
+      "high": 1
+    },
+    "by_type": {
+      "SIMULATION_KEYWORD": 53,
+      "HARDCODED_ML_LABELS": 2,
+      "SUSPICIOUS_VARIABLE": 2,
+      "SUSPICIOUS_FUNCTION_NAME": 1
+    },
+    "bulletproof_compliant": false
+  },
+  "bulletproof_status": false
+}

@@ -192,60 +192,31 @@ class ExpertAnnotationCoordinator:
         
         return annotation_tasks
         
-    def simulate_expert_annotations(
-        self, 
-        candidates: List[CitationCandidate],
-        annotator_id: str = "dev_annotator"
-    ) -> List[CitationContext]:
+    def validate_expert_annotations_required(
+        self,
+        candidates: List[CitationCandidate]
+    ) -> Dict[str, Any]:
         """
-        TEMPORARY: Create mock expert annotations for development/testing.
+        BULLETPROOF: Validate that expert annotations are required and available.
         
-        WARNING: This violates our bulletproof policy and should be replaced
-        with real expert annotations before production training.
+        NO SIMULATION ALLOWED - only real expert annotations accepted.
         """
         
-        self.logger.warning(
-            "USING SIMULATED ANNOTATIONS - Replace with real expert data before production!"
-        )
+        validation_result = {
+            'candidates_ready': len(candidates),
+            'expert_annotations_required': True,
+            'next_steps': [
+                'Deploy expert annotation platform',
+                'Recruit PhD-level neuroscience experts', 
+                'Complete annotation of all candidates',
+                'Validate inter-annotator agreement ≥90%'
+            ]
+        }
         
-        contexts = []
-        for candidate in candidates:
-            # Simple heuristics to simulate expert decisions (NOT for production)
-            text_lower = candidate.text.lower()
-            
-            # Simulate citation necessity decision
-            needs_citation = (
-                any(word in text_lower for word in ['shown', 'found', 'reported', 'studies']) or
-                'et al' in candidate.text or
-                bool(re.search(r'\d{4}', candidate.text))
-            )
-            
-            # Simulate citation type
-            if 'method' in text_lower or 'procedure' in text_lower:
-                citation_type = 'method'
-            elif 'result' in text_lower or 'finding' in text_lower:
-                citation_type = 'support'
-            elif 'previous' in text_lower or 'prior' in text_lower:
-                citation_type = 'background'
-            else:
-                citation_type = 'support'
-                
-            # Simulate placement
-            citation_placement = 'end' if candidate.text.endswith('.') else 'middle'
-            
-            context = CitationContext(
-                text=candidate.text,
-                needs_citation=needs_citation,
-                citation_type=citation_type,
-                citation_placement=citation_placement,
-                source_paper_id=candidate.paper_id,
-                annotator_id=annotator_id,
-                confidence_score=0.9  # High confidence for simulation
-            )
-            
-            contexts.append(context)
-            
-        return contexts
+        self.logger.info(f"Expert annotation required for {len(candidates)} citation candidates")
+        self.logger.info("BULLETPROOF POLICY: No simulation or mock data allowed")
+        
+        return validation_result
 
 
 class DataIntegrationPipeline:
@@ -271,21 +242,21 @@ class DataIntegrationPipeline:
         
     async def run_full_pipeline(
         self,
-        max_papers: int = 1000,
-        use_simulation: bool = False
+        max_papers: int = 1000
     ) -> Dict[str, Any]:
         """
         Run the complete data integration pipeline.
         
+        BULLETPROOF: Only processes real papers and requires expert annotations.
+        
         Args:
             max_papers: Maximum papers to process
-            use_simulation: If True, use simulated expert annotations (DEV ONLY)
         """
         
         results = {
             'papers_processed': 0,
             'candidates_extracted': 0,
-            'annotations_created': 0,
+            'expert_annotations_required': True,
             'training_ready': False
         }
         
@@ -309,27 +280,26 @@ class DataIntegrationPipeline:
         results['candidates_extracted'] = len(all_candidates)
         self.logger.info(f"Extracted {len(all_candidates)} citation candidates from {len(papers)} papers")
         
-        # Step 3: Create expert annotations
-        if use_simulation:
-            self.logger.warning("Using simulated annotations - NOT for production use!")
-            contexts = self.coordinator.simulate_expert_annotations(all_candidates)
-        else:
-            # In production, this would coordinate real expert annotation
-            self.logger.info(f"Ready for expert annotation: {len(all_candidates)} candidates")
-            self.logger.info("Run expert annotation platform to label these candidates")
-            return results
+        # Step 3: Validate expert annotation requirements  
+        validation_result = self.coordinator.validate_expert_annotations_required(all_candidates)
+        results.update(validation_result)
+        
+        self.logger.info("BULLETPROOF PIPELINE STAGE: Expert annotation required")
+        self.logger.info(f"Next steps: {validation_result['next_steps']}")
+        
+        # Check if we already have expert annotations in database
+        existing_annotations = self.coordinator.annotation_db.get_annotation_stats()
+        if existing_annotations.get('total', 0) > 0:
+            self.logger.info(f"Found {existing_annotations['total']} existing expert annotations")
             
-        # Step 4: Save annotations to database
-        for context in contexts:
-            success = self.coordinator.annotation_db.add_annotation(context)
-            if success:
-                results['annotations_created'] += 1
-                
-        # Step 5: Create train/val/test splits
-        if results['annotations_created'] > 0:
+            # Create train/val/test splits if annotations exist
             splits = create_train_val_test_split(self.annotations_db_path)
             results['splits'] = splits
             results['training_ready'] = splits['train'] > 0
+            results['expert_annotations_available'] = True
+        else:
+            self.logger.warning("No expert annotations found - training not possible")
+            results['expert_annotations_available'] = False
             
         return results
         
@@ -382,26 +352,25 @@ class DataIntegrationPipeline:
         return stats
 
 
-# Example usage for development and testing
+# BULLETPROOF usage - no simulation allowed
 async def main():
-    """Run the data integration pipeline."""
+    """Run the bulletproof data integration pipeline."""
     
     logging.basicConfig(level=logging.INFO)
     
     pipeline = DataIntegrationPipeline()
     
-    # Run with simulation for development (replace with real annotations)
+    # Run bulletproof pipeline - expert annotations required
     results = await pipeline.run_full_pipeline(
-        max_papers=100,  # Start small for testing
-        use_simulation=True  # REMOVE for production
+        max_papers=100  # Start small for initial collection
     )
     
-    print("Pipeline Results:")
+    print("BULLETPROOF Pipeline Results:")
     print(json.dumps(results, indent=2, default=str))
     
     # Check training readiness
     stats = pipeline.get_training_statistics()
-    print("\nTraining Statistics:")
+    print("\nTraining Readiness Status:")
     print(json.dumps(stats, indent=2, default=str))
 
 

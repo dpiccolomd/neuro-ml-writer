@@ -37,16 +37,18 @@ class CitationContextClassifier(nn.Module):
         self.bert = AutoModel.from_pretrained(model_name)
         self.config = AutoConfig.from_pretrained(model_name)
         
-        # Configure class counts from real expert data
+        # Configure class counts from real expert data ONLY
         if label_mappings is None:
-            # Default fallback - should be replaced with real data
-            self.label_mappings = {
-                'necessity': {False: 0, True: 1},
-                'type': {'background': 0, 'method': 1, 'support': 2, 'comparison': 3, 'contradiction': 4},
-                'placement': {'beginning': 0, 'middle': 1, 'end': 2}
-            }
-        else:
-            self.label_mappings = label_mappings
+            raise ValueError(
+                "BULLETPROOF POLICY VIOLATION: label_mappings cannot be None. "
+                "Model requires expert-derived label mappings from real annotation data. "
+                "No hardcoded fallbacks allowed."
+            )
+        
+        self.label_mappings = label_mappings
+        
+        # Validate that mappings come from expert data
+        self._validate_expert_mappings()
             
         # Extract class counts from real data
         num_necessity_classes = len(self.label_mappings['necessity'])
@@ -82,6 +84,35 @@ class CitationContextClassifier(nn.Module):
             nn.Dropout(dropout_rate),
             nn.Linear(64, num_placement_classes)
         )
+    
+    def _validate_expert_mappings(self):
+        """Validate that label mappings come from real expert data."""
+        
+        required_keys = ['necessity', 'type', 'placement']
+        for key in required_keys:
+            if key not in self.label_mappings:
+                raise ValueError(f"Missing required label mapping: {key}")
+            
+            if not isinstance(self.label_mappings[key], dict):
+                raise ValueError(f"Label mapping {key} must be a dictionary")
+                
+            if len(self.label_mappings[key]) == 0:
+                raise ValueError(f"Label mapping {key} cannot be empty - expert data required")
+        
+        # Check for suspicious hardcoded patterns
+        type_mapping = self.label_mappings['type']
+        suspicious_patterns = [
+            'background', 'method', 'support', 'comparison', 'contradiction'
+        ]
+        
+        if (len(type_mapping) == 5 and 
+            all(pattern in type_mapping for pattern in suspicious_patterns) and
+            type_mapping == {pattern: i for i, pattern in enumerate(suspicious_patterns)}):
+            raise ValueError(
+                "SUSPICIOUS HARDCODED PATTERN DETECTED: Citation type mapping appears to be "
+                "hardcoded rather than derived from expert annotations. "
+                "Only expert-derived taxonomies allowed."
+            )
         
     def forward(
         self, 
@@ -232,7 +263,7 @@ class CitationNetworkGNN(nn.Module):
         
         self.dropout = nn.Dropout(dropout_rate)
         self.activation = nn.ReLU()
-        
+    
     def forward(
         self, 
         node_features: torch.Tensor,  # [num_nodes, input_dim]

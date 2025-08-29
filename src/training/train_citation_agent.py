@@ -35,11 +35,11 @@ class CitationAgentTrainingPipeline:
         self,
         data_dir: str = "./data",
         models_dir: str = "./models",
-        use_simulation: bool = False  # DEV ONLY - replace with real annotations
+        require_expert_annotations: bool = True  # BULLETPROOF - only expert data allowed
     ):
         self.data_dir = Path(data_dir)
         self.models_dir = Path(models_dir)
-        self.use_simulation = use_simulation
+        self.require_expert_annotations = require_expert_annotations
         
         # Create directories
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -89,17 +89,16 @@ class CitationAgentTrainingPipeline:
             )
             
             integration_results = await integration_pipeline.run_full_pipeline(
-                max_papers=max_papers,
-                use_simulation=self.use_simulation
+                max_papers=max_papers
             )
             
             results['pipeline_stages']['data_integration'] = integration_results
             
             if not integration_results.get('training_ready', False):
-                if integration_results['annotations_created'] < min_annotations:
+                if not integration_results.get('expert_annotations_available', False):
                     raise ValueError(
-                        f"Insufficient annotations: {integration_results['annotations_created']} < {min_annotations}. "
-                        f"Expert annotation phase must be completed first."
+                        "BULLETPROOF POLICY: No expert annotations available. "
+                        "Expert annotation phase must be completed before training can begin."
                     )
             
             # Stage 2: Dataset Preparation
@@ -223,23 +222,26 @@ class CitationAgentTrainingPipeline:
                 tokenizer=tokenizer
             )
             
-            # Test with sample text
-            test_texts = [
-                "Previous studies have shown significant effects in neuroscience research.",
-                "The experimental procedure followed standard protocols.",
-                "Our results demonstrate clear patterns in the data."
-            ]
+            # Test with real examples from collected papers (if available)
+            validation_results = self._get_real_test_examples()
             
-            predictions = []
-            for text in test_texts:
-                pred = agent.predict_citation_necessity(text)
-                predictions.append(pred)
+            if validation_results['real_examples_available']:
+                predictions = []
+                for text in validation_results['test_texts']:
+                    pred = agent.predict_citation_necessity(text)
+                    predictions.append(pred)
+                    
+                validation_results['test_predictions'] = predictions
+            else:
+                # No real examples available
+                validation_results['test_predictions'] = []
+                self.logger.warning("No real test examples available - model functionality not validated")
                 
             return {
                 'model_loaded': True,
-                'predictions_working': True,
-                'test_predictions': predictions,
-                'validation_passed': True
+                'predictions_working': validation_results['real_examples_available'],
+                **validation_results,
+                'validation_passed': validation_results['real_examples_available']
             }
             
         except Exception as e:
@@ -248,6 +250,69 @@ class CitationAgentTrainingPipeline:
                 'model_loaded': False,
                 'validation_passed': False,
                 'error': str(e)
+            }
+    
+    def _get_real_test_examples(self) -> Dict[str, Any]:
+        """Get real test examples from collected papers database."""
+        
+        try:
+            import sqlite3
+            
+            # Try to get examples from papers database
+            papers_db_path = str(self.data_dir / "papers.db")
+            
+            if not Path(papers_db_path).exists():
+                return {
+                    'real_examples_available': False,
+                    'reason': 'Papers database not found'
+                }
+            
+            conn = sqlite3.connect(papers_db_path)
+            cursor = conn.cursor()
+            
+            # Get sample abstracts for testing
+            cursor.execute('''
+                SELECT abstract FROM papers 
+                WHERE abstract IS NOT NULL AND abstract != "" 
+                AND LENGTH(abstract) > 100
+                LIMIT 3
+            ''')
+            
+            abstracts = [row[0] for row in cursor.fetchall()]
+            conn.close()
+            
+            if not abstracts:
+                return {
+                    'real_examples_available': False,
+                    'reason': 'No suitable abstracts found in database'
+                }
+            
+            # Extract first sentence from each abstract as test text
+            test_texts = []
+            for abstract in abstracts:
+                # Split into sentences and take the first meaningful one
+                sentences = abstract.split('.')
+                for sentence in sentences:
+                    if len(sentence.strip()) > 20:  # Meaningful sentence
+                        test_texts.append(sentence.strip() + '.')
+                        break
+            
+            if not test_texts:
+                return {
+                    'real_examples_available': False,
+                    'reason': 'Could not extract meaningful sentences from abstracts'
+                }
+            
+            return {
+                'real_examples_available': True,
+                'test_texts': test_texts,
+                'source': 'Real paper abstracts from database'
+            }
+            
+        except Exception as e:
+            return {
+                'real_examples_available': False,
+                'reason': f'Error loading real examples: {str(e)}'
             }
 
 
@@ -259,7 +324,7 @@ def main():
     parser.add_argument('--models_dir', default='./models', help='Models directory')
     parser.add_argument('--max_papers', type=int, default=100, help='Maximum papers to collect')
     parser.add_argument('--min_annotations', type=int, default=50, help='Minimum annotations required')
-    parser.add_argument('--use_simulation', action='store_true', help='Use simulated annotations (DEV ONLY)')
+    parser.add_argument('--allow_no_annotations', action='store_true', help='Allow training without expert annotations (NOT RECOMMENDED)')
     
     args = parser.parse_args()
     
@@ -267,7 +332,7 @@ def main():
     pipeline = CitationAgentTrainingPipeline(
         data_dir=args.data_dir,
         models_dir=args.models_dir,
-        use_simulation=args.use_simulation
+        require_expert_annotations=not args.allow_no_annotations
     )
     
     # Run training
