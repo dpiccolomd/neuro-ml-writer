@@ -29,17 +29,24 @@ jobs:
         
     - name: 📦 Install Dependencies
       run: |
-        pip install -r requirements.txt
-        pip install ast-check bandit safety vulture  # Additional security tools
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt || echo "requirements.txt not found, installing basic dependencies"
+        pip install numpy pandas  # sqlite3, pathlib, dataclasses, datetime, typing are built-in
+        pip install bandit safety vulture  # Security tools
+        
+    - name: 📁 Create Reports Directory
+      run: mkdir -p reports
         
     - name: 🔍 Static Code Analysis - Simulation Detection
       run: |
         echo "🚨 STAGE 1: Static Analysis for Simulation/Placeholder Content"
+        chmod +x scripts/bulletproof_code_analyzer.py || true
         python scripts/bulletproof_code_analyzer.py --mode static --fail-fast
         
     - name: 🗄️ Database Validation - Expert Data Only
       run: |
         echo "🚨 STAGE 2: Database Content Validation"
+        chmod +x scripts/bulletproof_code_analyzer.py || true
         python scripts/bulletproof_code_analyzer.py --mode database --strict
         
     - name: 🧠 Model Architecture Validation
@@ -56,22 +63,25 @@ jobs:
     - name: 📊 Training Data Authenticity Check
       run: |
         echo "🚨 STAGE 4: Training Data Authenticity Verification"
+        chmod +x scripts/validate_training_data.py || true
         python scripts/validate_training_data.py --mode comprehensive --expert-only
         
     - name: 🔬 Advanced Pattern Detection
       run: |
         echo "🚨 STAGE 5: ML-Powered Violation Detection"
+        chmod +x scripts/bulletproof_code_analyzer.py || true
         python scripts/bulletproof_code_analyzer.py --mode advanced --ml-patterns
         
     - name: 📋 Generate Compliance Report
       if: always()  # Run even if previous steps failed
       run: |
         echo "📊 GENERATING BULLETPROOF COMPLIANCE REPORT"
+        chmod +x scripts/generate_compliance_report.py || true
         python scripts/generate_compliance_report.py --output-format github-actions
         
     - name: 📤 Upload Compliance Report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bulletproof-compliance-report-${{ github.sha }}
         path: reports/compliance-report.json
@@ -79,7 +89,7 @@ jobs:
         
     - name: 💬 PR Comment with Violations (if any)
       if: failure() && github.event_name == 'pull_request'
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const fs = require('fs');
