@@ -1,0 +1,137 @@
+{
+  "analysis_mode": "static",
+  "timestamp": "2025-08-30T11:43:31.213867",
+  "violations": [
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/data_integration.py",
+      "line": 64,
+      "column": 44,
+      "description": "Forbidden simulation keyword 'demo' detected",
+      "evidence": "r'findings? (?:suggest|indicate|demonstrate)',",
+      "suggestion": "Remove all references to 'demo' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/training/validation.py",
+      "line": 119,
+      "column": 21,
+      "description": "Forbidden simulation keyword 'sample' detected",
+      "evidence": "for title in sample_titles:",
+      "suggestion": "Remove all references to 'sample' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 3,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 52,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'simulate' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'simulate' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 3,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 52,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'simulated' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'simulated' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 5,
+      "column": 22,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "NO simulated data, NO placeholders - only authentic expert annotations.",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 378,
+      "column": 85,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "cursor.execute(f'UPDATE citation_annotations SET split = ? WHERE id IN ({placeholders})',",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 26,
+      "column": 62,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "This represents actual expert-labeled data, not simulated examples.",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    },
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 55,
+      "column": 32,
+      "description": "Forbidden simulation keyword 'example' detected",
+      "evidence": "- No synthetic or simulated examples allowed",
+      "suggestion": "Remove all references to 'example' and replace with real implementation"
+    }
+  ],
+  "summary": {
+    "total_violations": 12,
+    "by_severity": {
+      "critical": 12
+    },
+    "by_type": {
+      "SIMULATION_KEYWORD": 12
+    },
+    "bulletproof_compliant": false
+  },
+  "bulletproof_status": false
+}

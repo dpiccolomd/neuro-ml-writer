@@ -1,0 +1,27 @@
+{
+  "analysis_mode": "static",
+  "timestamp": "2025-08-30T11:43:43.935860",
+  "violations": [
+    {
+      "type": "SIMULATION_KEYWORD",
+      "severity": "critical",
+      "file": "src/agents/utils/data_processing.py",
+      "line": 378,
+      "column": 85,
+      "description": "Forbidden simulation keyword 'placeholder' detected",
+      "evidence": "cursor.execute(f'UPDATE citation_annotations SET split = ? WHERE id IN ({placeholders})',",
+      "suggestion": "Remove all references to 'placeholder' and replace with real implementation"
+    }
+  ],
+  "summary": {
+    "total_violations": 1,
+    "by_severity": {
+      "critical": 1
+    },
+    "by_type": {
+      "SIMULATION_KEYWORD": 1
+    },
+    "bulletproof_compliant": false
+  },
+  "bulletproof_status": false
+}

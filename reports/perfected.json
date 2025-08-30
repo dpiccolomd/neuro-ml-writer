@@ -1,0 +1,12 @@
+{
+  "analysis_mode": "static",
+  "timestamp": "2025-08-30T11:43:54.529909",
+  "violations": [],
+  "summary": {
+    "total_violations": 0,
+    "by_severity": {},
+    "by_type": {},
+    "bulletproof_compliant": true
+  },
+  "bulletproof_status": true
+}
