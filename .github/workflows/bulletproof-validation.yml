@@ -64,7 +64,7 @@ jobs:
       run: |
         echo "🚨 STAGE 4: Training Data Authenticity Verification"
         chmod +x scripts/validate_training_data.py || true
-        python scripts/validate_training_data.py --mode comprehensive --expert-only
+        python scripts/validate_training_data.py --mode expert-only
         
     - name: 🔬 Advanced Pattern Detection
       run: |
